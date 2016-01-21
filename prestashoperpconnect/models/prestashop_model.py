@@ -1,6 +1,15 @@
 from openerp import models, fields, api
 
 
+class PrestashopInstalled(models.AbstractModel):
+    """Empty model used to know if the module is installed in the
+    database.
+
+    If the model is in the registry, the module is installed.
+    """
+    _name = 'prestashop.installed'
+    
+
 class PrestashopBackend(models.Model):
     _name = 'prestashop.backend'
     _doc = 'Prestashop Backend'
@@ -26,10 +35,9 @@ class PrestashopBinding(models.AbstractModel):
     """
     
     _name = 'prestashop.binding'
-    _inherit = 'external.binding'
     _description = 'PrestaShop Binding (abstract)'
+    _inherit = 'external.binding'
 
-    #
     backend_id = fields.Many2one(
         comodel_name = 'prestashop.backend',
         string = "PrestaShop Backend",

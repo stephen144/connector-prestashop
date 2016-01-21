@@ -3,7 +3,7 @@ from openerp.addons.connector.queue.job import job, related_action
 from ..connector import get_environment
 
 
-class PrestashopExporter(Exporter):
+class PrestashopBaseExporter(Exporter):
     """
     Exporters for Prestashop.
 

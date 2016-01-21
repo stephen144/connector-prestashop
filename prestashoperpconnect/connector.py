@@ -24,7 +24,7 @@ from openerp.osv import orm
 from openerp.addons.connector.connector import Environment
 from openerp.addons.connector.checkpoint import checkpoint
 
-
+    
 def add_checkpoint(session, model_name, record_id, backend_id):
     """ Add a row in the model ``connector.checkpoint`` for a record,
     meaning it has to be reviewed by a user.

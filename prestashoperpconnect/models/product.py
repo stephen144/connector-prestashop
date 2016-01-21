@@ -1,6 +1,7 @@
 from openerp import models, fields, api
 from openerp.addons.connector.unit.synchronizer import Exporter
 
+
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
@@ -29,6 +30,7 @@ class PrestashopProductTemplate(models.Model):
         required = True,
         ondelete = 'cascade',
     )
+
 
 @prestashop
 class ProductTemplateExporter(Exporter):

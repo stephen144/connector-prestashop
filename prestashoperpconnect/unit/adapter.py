@@ -1,5 +1,5 @@
 from openerp.addons.connector.unit.backend_adapter import CRUDAdapter
-from prestapyt import PrestaShopWebServiceDict
+from prestapyt import PrestaShopWebService, PrestShopWebServiceError
 
 
 class PrestaShopLocation(object):
@@ -32,51 +32,61 @@ class PrestaShopAdapter(PrestaShopCRUDAdapter):
     
     _model_name = None
     _prestashop_model = None
-    _export_node_name = None
+    _api_node_name = None
 
     def connect(self):
         #UX476CTV4XM3VMTUX7F235YGC4YG5LWW
-        return PrestaShopWebServiceDict(
+        return PrestaShopWebService(
             self.prestashop.api_url,
             self.prestashop.webservice_key
         )
 
-    def search(self, filters=None):
+    def search(self, options=None):
         """ Search records according to some criterias
         and returns a list of ids
 
-        :rtype: list
+        options is a dict
+
+        :rtype: elem
         """
         api = self.connect()
-        return api.search(self._prestashop_model, filters)
+        return api.search(self._prestashop_model, options)
 
     def read(self, id, options=None):
-        """ Returns the information of a record
+        """
+        Returns the information of a record
 
-        :rtype: dict
+        :rtype: Element
         """
 
         api = self.connect()
-        res = api.get(self._prestashop_model, id, options=options)
-        first_key = res.keys()[0]
-        return res[first_key]
+        data = api.get(self._prestashop_model, id, options)
+        return data
 
-    def create(self, attributes=None):
-        """ Create a record on the external system """
+    def create(self, data=None):
+        """
+        Create a record on the external system
+
+        data is a dict from mapper
+        """
         
         api = self.connect()
-        return api.add(self._prestashop_model, {
-            self._export_node_name: attributes
-        })
+        #wrap data dict in elem
+        return api.add(self._prestashop_model, data)
 
-    def write(self, id, attributes=None):
-        """ Update records on the external system """
+    def write(self, id, data=None):
+        """ Update records on the external system
+
+        data is dict from mapper
+        """
         
         api = self.connect()
-        attributes['id'] = id
-        return api.edit(self._prestashop_model, {
-            self._export_node_name: attributes
-        })
+        #wrap data dict in elem
+        return api.edit(
+            self._prestashop_model,
+            id,
+            data,
+        )
 
     def delete(self, ids):
         """ Delete records on the external system """
