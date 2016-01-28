@@ -1,95 +1,35 @@
 from openerp.addons.connector.unit.backend_adapter import CRUDAdapter
-from prestapyt import PrestaShopWebService, PrestShopWebServiceError
-
-
-class PrestaShopLocation(object):
-
-    def __init__(self, location, webservice_key):
-        self.location = location
-        self.webservice_key = webservice_key
-        self.api_url = '%s/api' % location
 
 
 class PrestaShopCRUDAdapter(CRUDAdapter):
-    """ External Records Adapter for PrestaShop """
+    """
+    External Records Adapter for PrestaShop
+    """
 
+    _model_name = None
+    _prestashop_model = None
+    
     def __init__(self, environment):
-        """
-        :param environment: current environment (backend, session, ...)
-        :type environment: :py:class:`connector.connector.Environment`
-        """
-        
         super(PrestaShopCRUDAdapter, self).__init__(environment)
-        self.prestashop = PrestaShopLocation(
+        self.api = PrestaShopAPI(
             self.backend_record.location,
             self.backend_record.webservice_key
         )
 
-
-class PrestaShopAdapter(PrestaShopCRUDAdapter):
-    """
-    """
-    
-    _model_name = None
-    _prestashop_model = None
-    _api_node_name = None
-
-    def connect(self):
-        #UX476CTV4XM3VMTUX7F235YGC4YG5LWW
-        return PrestaShopWebService(
-            self.prestashop.api_url,
-            self.prestashop.webservice_key
-        )
-
-    def search(self, options=None):
-        """ Search records according to some criterias
-        and returns a list of ids
-
-        options is a dict
-
-        :rtype: elem
-        """
-        api = self.connect()
-        return api.search(self._prestashop_model, options)
+    def search(self, filters):
+        return self.api.search(self._prestashop_model, filters)
 
     def read(self, id, options=None):
-        """
-        Returns the information of a record
+        return self.api.get(self._prestashop_model, id, options)
 
-        :rtype: Element
-        """
+    def create(self, data):
+        #xmlTree = data
+        return self.api.post(self._prestashop_model, xmlTree)
 
-        api = self.connect()
-        data = api.get(self._prestashop_model, id, options)
-        return data
-
-    def create(self, data=None):
-        """
-        Create a record on the external system
-
-        data is a dict from mapper
-        """
-        
-        api = self.connect()
-        #wrap data dict in elem
-        return api.add(self._prestashop_model, data)
-
-    def write(self, id, data=None):
-        """ Update records on the external system
-
-        data is dict from mapper
-        """
-        
-        api = self.connect()
-        #wrap data dict in elem
-        return api.edit(
-            self._prestashop_model,
-            id,
-            data,
-        )
+    def write(self, id, data):
+        #get xmlTree
+        #xmlTree + data
+        return self.api.put(self._prestashop_model, id, xmlTree)
 
     def delete(self, ids):
-        """ Delete records on the external system """
-        
-        api = self.connect()
-        return api.delete(self._prestashop_model, ids)
+        return self.api.delete(self._prestashop_model, ids)
