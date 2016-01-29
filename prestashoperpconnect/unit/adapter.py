@@ -1,5 +1,6 @@
 from openerp.addons.connector.unit.backend_adapter import CRUDAdapter
-
+from prestashop_api import (PrestaShopAPI, data2xml)
+    
 
 class PrestaShopCRUDAdapter(CRUDAdapter):
     """
@@ -15,21 +16,26 @@ class PrestaShopCRUDAdapter(CRUDAdapter):
             self.backend_record.location,
             self.backend_record.webservice_key
         )
-
+        
     def search(self, filters):
         return self.api.search(self._prestashop_model, filters)
 
     def read(self, id, options=None):
-        return self.api.get(self._prestashop_model, id, options)
+        xml = self.api.get(self._prestashop_model, id, options)
+        return xml
 
+    @data2xml
     def create(self, data):
-        #xmlTree = data
-        return self.api.post(self._prestashop_model, xmlTree)
+        xml = self.api.post(self._prestashop_model, data)
+        #return id??
+        return xml
 
+    @data2xml
     def write(self, id, data):
-        #get xmlTree
-        #xmlTree + data
-        return self.api.put(self._prestashop_model, id, xmlTree)
+        ok = self.api.put(self._prestashop_model, id, data)
+        return ok
 
     def delete(self, ids):
-        return self.api.delete(self._prestashop_model, ids)
+        #pass range of ids to api
+        ok = self.api.delete(self._prestashop_model, ids)
+        return ok

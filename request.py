@@ -3,17 +3,6 @@ from xml.dom import minidom
 import requests
 
 
-def pp(elem):
-    return ElementTree.tostring(elem, 'utf-8')
-
-def pprint(elem):
-    """Return a pretty-printed XML string for the Element.
-    """
-    rough_string = ElementTree.tostring(elem, 'utf-8')
-    reparsed = minidom.parseString(rough_string)
-    return reparsed.toprettyxml(indent="  ")
-
-
 class PrestaShopAPI(object):
 
     def __init__(self, url, key):
@@ -60,15 +49,3 @@ class PrestaShopAPI(object):
         
         xmlTree = ElementTree.fromstring(r.text)
         return xmlTree
-
-
-if __name__ == '__main__':
-    url = 'http://winona/prestashop/api'
-    key = 'E3P9JC4E5NRJ63ZZYJNKG4IPWGDPEG4L'
-    api = PrestaShopAPI(url, key)
-
-    #api.get('customers', 1)
-
-
-
-
