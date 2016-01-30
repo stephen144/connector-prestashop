@@ -1,4 +1,4 @@
-# ConnectorUnit needs to be registered?
+import prestashop_api
 import adapter
 import binder
 import deleter
