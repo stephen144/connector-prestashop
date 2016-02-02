@@ -4,10 +4,10 @@ from openerp.addons.connector.unit.mapper import (
 )
 
 
-class PrestashopExportMapper(ExportMapper):
+class PrestaShopExportMapper(ExportMapper):
 
     def _map_direct(self, record, from_attr, to_attr):
-        res = super(PrestashopExportMapper, self)._map_direct(record,
+        res = super(PrestaShopExportMapper, self)._map_direct(record,
                                                               from_attr,
                                                               to_attr)
         column = self.model._all_columns[from_attr].column

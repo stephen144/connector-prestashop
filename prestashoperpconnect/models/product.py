@@ -1,5 +1,8 @@
 from openerp import models, fields, api
-from openerp.addons.connector.unit.synchronizer import Exporter
+from openerp.addons.connector.event import (on_record_create,
+                                            on_record_write)
+from ..unit.Exporter PrestaShopExporter, export_record
+
 
 
 class ProductTemplate(models.Model):
@@ -15,14 +18,10 @@ class ProductTemplate(models.Model):
 
 
 class PrestashopProductTemplate(models.Model):
-    """
-
-    """
-    
     _name = 'prestashop.product.template'
     _description = "Prestashop Product Template Binding"
     _inherit = 'prestashop.binding'
-    _inherits = {'product.product': 'odoo_id'}
+    _inherits = {'product.template': 'odoo_id'}
 
     odoo_id = fields.Many2one(
         comodel_name = 'product.template',
@@ -33,35 +32,23 @@ class PrestashopProductTemplate(models.Model):
 
 
 @prestashop
-class ProductTemplateExporter(Exporter):
+class ProductTemplateExporter(PrestaShopExporter):
     _model_name = 'prestashop.product.template'
 
-    def get_filter(self, product):
-        binder = self.get_binder_for_model()
-        prestashop_id = binder.to_backend(product.id)
-        return {
-            'filter[id_product]': prestashop_id,
-            'filter[id_product_attribute]': 0
-        }
 
-    def run(self, binding_id):
-        """ Export the product template to Prestashop """
-        
-        product = self.model.browse(binding_id)
-        prestashop_id = self.binder.to_backend(product.id)
-        data = self._get_data(product)
-        self.backend_adapter.export_quantity(
-            None,
-            int(product.quantity),
-        )
-        """
-        adapter = self.get_connector_unit_for_model(
-            GenericAdapter, '_import_stock_available'
-        )
-        filter = self.get_filter(product)
-        adapter.export_quantity(filter, int(product.quantity))
-        """
+@on_record_create(model_names='product.template')
+def product_template_created(
+    
+@on_record_write(model_names='prestashop.product.template')
+def product_template_modified(session, model, id):
+    #product = session.env[model].browse(id)
 
+    # TODO: check the product tags
+    #if product:
+    # prob don't need all that
+    export_record.delay(session, model, id, priority=30)
+
+"""    
 @prestashop
 class ProductInventoryAdapter(PrestaShopAdapter):
     _model_name = '_import_stock_available'
@@ -114,9 +101,7 @@ class ProductInventoryAdapter(PrestaShopAdapter):
 INVENTORY_FIELDS = ('quantity',)
 
 
-@on_record_write(model_names=[
-    'prestashop.product.product',
-])
+@on_record_write(model_names='prestashop.template.product')
 def prestashop_product_stock_updated(session, model_name, record_id,
                                      fields=None):
     if session.context.get('connector_no_export'):
@@ -135,3 +120,4 @@ def export_inventory(session, model_name, record_id, fields=None):
     env = get_environment(session, model_name, backend_id)
     inventory_exporter = env.get_connector_unit(ProductInventoryExport)
     return inventory_exporter.run(record_id, fields)
+"""

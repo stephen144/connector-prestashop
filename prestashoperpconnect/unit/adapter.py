@@ -1,43 +1,5 @@
 from openerp.addons.connector.unit.backend_adapter import CRUDAdapter
-from prestashop_api import PrestaShopAPI
-from xml.etree import ElementTree
-
-
-def dict2xmltest(func):
-    def wrapper(self, data):
-        xml = self.api.get_schema(self._prestashop_model)
-        tree = ElementTree.fromstring(xml)
-        dataNode = tree[0]
-        
-        for k, v in data.iteritems():
-            dataNode.find(k).text = str(v)
-
-        tree[0] = dataNode
-        xml = ElementTree.tostring(tree, 'utf-8')
-        return func(self, xml)
-    
-    return wrapper
-
-def dict2xml(data, model):
-    xml = self.api.get_schema(model)
-    tree = ElementTree.fromstring(xml)
-    
-    for k, v in data.iteritems():
-        tree[0].find(k).text = str(v)
-    
-    xml = ElementTree.tostring(tree, 'utf-8')
-    return xml           
-
-def xml2dict(xml):
-    tree = ElementTree.fromstring(xml)
-    dataNode = tree[0]
-    data = {}
-    
-    for child in dataNode:
-        data[child.tag] = child.text
-    
-    return data
-    
+from prestashop_api import PrestaShopAPI, data2xml, xml2data
 
 
 class PrestaShopCRUDAdapter(CRUDAdapter):
@@ -56,11 +18,12 @@ class PrestaShopCRUDAdapter(CRUDAdapter):
         )
 
     def create(self, data):
-        data = dict2xml(data)
-        result = self.api.post(self._prestashop_model, data)
+        schema = self.api.get_schema(self._prestashop_model)
+        xml = data2xml(data, schema)
         
-        #return id??
-        return xml
+        xml = self.api.post(self._prestashop_model, xml)
+        data = xml2data(xml)
+        return data['id']
         
     def delete(self, ids):
         #pass range of ids to api
@@ -69,15 +32,16 @@ class PrestaShopCRUDAdapter(CRUDAdapter):
 
     def read(self, id, options=None):
         xml = self.api.get(self._prestashop_model, id, options)
-        data = xml2dict(xml)
+        data = xml2data(xml)
         return data
 
     def search(self, filters):
         return self.api.search(self._prestashop_model, filters)
     
     def write(self, id, data):
-        data = dict2xml(data)
-        ok = self.api.put(self._prestashop_model, id, data)
+        schema = self.api.get_schema(self._prestashop_model)
+        xml = data2xml(data, schema)
+        ok = self.api.put(self._prestashop_model, id, xml)
         return ok
 
 

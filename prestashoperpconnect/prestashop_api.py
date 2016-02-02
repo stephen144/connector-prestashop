@@ -1,4 +1,24 @@
 import requests
+from xml.etree import ElementTree
+
+
+def data2xml(data, schema):
+    tree = ElementTree.fromstring(schema)
+    
+    for k, v in data.iteritems():
+        tree[0].find(k).text = str(v)
+    
+    xml = ElementTree.tostring(tree, 'utf-8')
+    return xml
+
+def xml2data(xml):
+    tree = ElementTree.fromstring(xml)
+    data = {}
+    
+    for child in tree[0]:
+        data[child.tag] = child.text
+    
+    return data
 
 
 class PrestaShopAPI(object):
