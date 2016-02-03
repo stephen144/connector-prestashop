@@ -1,52 +1,63 @@
 from openerp import models, fields, api
-from openerp.addons.connector.event import (on_record_create,
-                                            on_record_write)
-from ..unit.Exporter PrestaShopExporter, export_record
-
+from ..backend import prestashop
+from ..unit.binder import PrestaShopBinder
+from ..unit.exporter import (PrestaShopExporter,
+                             PrestaShopBatchExporter)
+from ..unit.adapter import PrestaShopAdapter
+from ..unit.mapper import ExportMapper
 
 
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
     prestashop_bind_ids = fields.One2many(
+        string = "PrestaShop Bindings",
         comodel_name = 'prestashop.product.template',
         inverse_name = 'odoo_id',
-        string = "PrestaShop Bindings",
+    )
+    in_store = fields.Boolean(
+        string = "In Store?",
+        index = True,
     )
 
-    #override copy so bind_ids don't copy?
+    #TODO: override copy so bind_ids don't copy
 
 
-class PrestashopProductTemplate(models.Model):
+class PrestaShopProductTemplate(models.Model):
     _name = 'prestashop.product.template'
     _description = "Prestashop Product Template Binding"
     _inherit = 'prestashop.binding'
     _inherits = {'product.template': 'odoo_id'}
 
     odoo_id = fields.Many2one(
-        comodel_name = 'product.template',
         string = "Product",
+        comodel_name = 'product.template',
         required = True,
         ondelete = 'cascade',
     )
 
 
 @prestashop
+class ProductTemplateBatchExporter(PrestaShopBatchExporter):
+    _model_name = 'prestashop.product.template'
+    
+@prestashop
 class ProductTemplateExporter(PrestaShopExporter):
     _model_name = 'prestashop.product.template'
 
+@prestashop
+class ProductTemplateAdapter(PrestaShopAdapter):
+    _model_name = 'prestashop.product.template'
+    _prestashop_model = 'products'
 
-@on_record_create(model_names='product.template')
-def product_template_created(
-    
-@on_record_write(model_names='prestashop.product.template')
-def product_template_modified(session, model, id):
-    #product = session.env[model].browse(id)
 
-    # TODO: check the product tags
-    #if product:
-    # prob don't need all that
-    export_record.delay(session, model, id, priority=30)
+class ProductTemplateExportMapper(Mapper):
+    _model_name = 'prestashop.product.template'
+
+    direct = [
+        (),
+    ]
+
 
 """    
 @prestashop

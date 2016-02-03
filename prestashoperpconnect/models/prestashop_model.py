@@ -1,39 +1,41 @@
 from openerp import models, fields, api
+from openerp.addons.connector.session import ConnectorSession
+from ..unit.exporter import export_batch
 
 
-class PrestashopInstalled(models.AbstractModel):
-    """Empty model used to know if the module is installed in the
-    database.
-
-    If the model is in the registry, the module is installed.
-    """
-    _name = 'prestashop.installed'
-    
-
-class PrestashopBackend(models.Model):
+class PrestaShopBackend(models.Model):
     _name = 'prestashop.backend'
-    _doc = 'Prestashop Backend'
+    _description = 'PrestaShop Backend'
     _inherit = 'connector.backend'
     _backend_type = 'prestashop'
 
-    version = fields.Selection(selection='_select_versions')
-    location = fields.Char()
-    webservice_key = fields.Char()
+    version = fields.Selection(
+        selection = '_select_versions',
+        required = True,
+    )
+    location = fields.Char(required=True)
+    key = fields.Char(required=True)
 
     @api.model
     def _select_versions(self):
-        """ Available versions
+        return [('1.6.1.4', '1.6.1.4')]
 
-        Can be inherited to add custom versions.
-        """
-        return [('1.6.0.11', '1.6.0.11')]
+    @api.multi
+    def _export_model(self, model):
+        session = ConnectorSession(
+            self.env.cr,
+            self.env.uid,
+            context = self.env.context,
+        )
+        self.ensure_one()
+        export_batch.delay(
+            session,
+            model,
+            self.id,
+        )
 
-
-class PrestashopBinding(models.AbstractModel):
-    """
-
-    """
-    
+        
+class PrestaShopBinding(models.AbstractModel):
     _name = 'prestashop.binding'
     _description = 'PrestaShop Binding (abstract)'
     _inherit = 'external.binding'
