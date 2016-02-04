@@ -1,5 +1,5 @@
 from openerp.addons.connector.unit.backend_adapter import CRUDAdapter
-from prestashop_api import PrestaShopAPI, data2xml, xml2data
+from prestashop.prestashop_api import PrestaShopAPI, data2xml, xml2data
 
 
 class PrestaShopCRUDAdapter(CRUDAdapter):

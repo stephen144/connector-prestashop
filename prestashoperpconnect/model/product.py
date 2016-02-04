@@ -1,10 +1,11 @@
 from openerp import models, fields, api
-from ..backend import prestashop
+from ..connector.backend import prestashop
+from ..unit.adapter import PrestaShopAdapter
 from ..unit.binder import PrestaShopBinder
 from ..unit.exporter import (PrestaShopExporter,
                              PrestaShopBatchExporter)
-from ..unit.adapter import PrestaShopAdapter
-from ..unit.mapper import ExportMapper
+from openerp.addons.connector.unit.mapper import (ExportMapper,
+                                                  mapping)
 
 
 class ProductTemplate(models.Model):
@@ -36,26 +37,32 @@ class PrestaShopProductTemplate(models.Model):
         ondelete = 'cascade',
     )
 
+@prestashop
+class ProductTemplateAdapter(PrestaShopAdapter):
+    _model_name = 'prestashop.product.template'
+    _prestashop_model = 'products'
+
+@prestashop
+class ProductTemplateBinder(PrestaShopBinder):
+    _model_name = 'prestashop.product.template'
+
+@prestashop
+class ProductTemplateExporter(PrestaShopExporter):
+    _model_name = 'prestashop.product.template'
 
 @prestashop
 class ProductTemplateBatchExporter(PrestaShopBatchExporter):
     _model_name = 'prestashop.product.template'
     
 @prestashop
-class ProductTemplateExporter(PrestaShopExporter):
-    _model_name = 'prestashop.product.template'
-
-@prestashop
-class ProductTemplateAdapter(PrestaShopAdapter):
-    _model_name = 'prestashop.product.template'
-    _prestashop_model = 'products'
-
-
-class ProductTemplateExportMapper(Mapper):
+class ProductTemplateExportMapper(ExportMapper):
     _model_name = 'prestashop.product.template'
 
     direct = [
-        (),
+        ('id', 'id'),
+        ('name', 'name'),
+        ('list_price', 'price'),
+        ('default_code', 'reference'),
     ]
 
 
@@ -125,7 +132,7 @@ def prestashop_product_stock_updated(session, model_name, record_id,
 
 @job
 def export_inventory(session, model_name, record_id, fields=None):
-    """ Export the inventory configuration and quantity of a product. """
+    "" Export the inventory configuration and quantity of a product. ""
     product = session.browse(model_name, record_id)
     backend_id = product.backend_id.id
     env = get_environment(session, model_name, backend_id)

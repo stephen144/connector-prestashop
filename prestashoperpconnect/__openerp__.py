@@ -1,20 +1,17 @@
-# -*- coding: utf-8 -*-
 {
-    "name": "Prestashop-OpenERP connector New Generation",
+    "name": "Prestashop-Odoo Connector",
     "version": "8.01",
     "license": "AGPL-3",
     "depends": [
         "sale",
         "connector",
     ],
-    "external_dependencies": {
-        'python': ["unidecode"],
-    },
-    "author": "PrestashopERPconnect Core Editors,Odoo Community Association (OCA)",
+    "author": "SM",
     "description": """
-    This module connects OpenERP and Prestashop.
+    This module connects Odoo and Prestashop by doing a few exports.
     """,
     "category": "Connector",
     'data': [
+        'view/prestashop_model.xml',
     ],
 }

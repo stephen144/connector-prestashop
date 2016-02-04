@@ -1,8 +1,8 @@
 from openerp.addons.connector.unit.synchronizer import Exporter
 from openerp.addons.connector.queue.job import job, related_action
-from ..connector import get_environment
-from ..related_action import unwrap_binding
 from openerp.addons.connector.event import on_record_write
+from ..connector.connector import get_environment
+from ..connector.related_action import unwrap_binding
 
 
 class PrestaShopExporter(Exporter):

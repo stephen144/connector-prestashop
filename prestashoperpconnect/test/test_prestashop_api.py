@@ -1,9 +1,9 @@
-import unittest
-from prestashop_api import PrestaShopAPI, data2xml, xml2data
-from xml.etree import ElementTree
-from requests.exceptions import HTTPError
 import random
 import string
+import unittest
+from xml.etree import ElementTree
+from requests.exceptions import HTTPError
+from ..prestashop.prestashop_api import PrestaShopAPI, data2xml, xml2data
 
 
 def setNode(xml, node, value):
