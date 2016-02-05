@@ -5,6 +5,7 @@ from ..unit.binder import PrestaShopBinder
 from ..unit.exporter import (PrestaShopExporter,
                              PrestaShopBatchExporter)
 from openerp.addons.connector.unit.mapper import (ExportMapper,
+                                                  only_create,
                                                   mapping)
 
 
@@ -65,6 +66,10 @@ class ProductTemplateExportMapper(ExportMapper):
         ('default_code', 'reference'),
     ]
 
+    @only_create
+    @mapping
+    def blank_id(self, record):
+        return {'id': ''}
 
 """    
 @prestashop
@@ -80,7 +85,7 @@ class ProductInventoryAdapter(PrestaShopAdapter):
     def export_quantity(self, filters, quantity):
         self.export_quantity_url(
             self.backend_record.location,
-            self.backend_record.webservice_key,
+            self.backend_record.key,
             filters,
             quantity
         )
@@ -93,7 +98,7 @@ class ProductInventoryAdapter(PrestaShopAdapter):
         for shop in shops:
             self.export_quantity_url(
                 '%s/api' % shop.default_url,
-                self.backend_record.webservice_key,
+                self.backend_record.key,
                 filters,
                 quantity
             )

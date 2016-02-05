@@ -2,7 +2,7 @@ from openerp.addons.connector.unit.synchronizer import Exporter
 from openerp.addons.connector.queue.job import job, related_action
 from openerp.addons.connector.event import on_record_write
 from ..connector.connector import get_environment
-from ..connector.related_action import unwrap_binding
+#from ..connector.related_action import unwrap_binding
 
 
 class PrestaShopExporter(Exporter):
@@ -10,7 +10,7 @@ class PrestaShopExporter(Exporter):
     def __init__(self, connector_env):
         """ """
         
-        super(PrestashopExporter, self).__init__(connector_env)
+        super(PrestaShopExporter, self).__init__(connector_env)
         self.binding_id = None
         self.prestashop_id = None
         
@@ -61,10 +61,10 @@ class PrestaShopBatchExporter(Exporter):
         count = self.env[model].search_count(domain)
 
         while offset < count:
-            yield self.backend_adapter.search(
+            yield self.env[model].search(
                 domain,
                 offset = offset,
-                limit = self.CHUNK_SIZE
+                limit = self.CHUNK_SIZE,
             )
             offset = offset + self.CHUNK_SIZE
     
@@ -93,7 +93,7 @@ def export_batch(session, model, backend_id):
 
             
 @job
-@related_action(action=unwrap_binding)
+#@related_action(action=unwrap_binding)
 def export_record(session, model, backend_id, odoo_id):
     cenv = get_environment(session, model, backend_id)
     exporter = cenv.get_connector_unit(PrestaShopExporter)

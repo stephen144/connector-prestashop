@@ -21,6 +21,10 @@ class PrestaShopBackend(models.Model):
         return [('1.6.1.4', '1.6.1.4')]
 
     @api.multi
+    def export_products(self):
+        self._export_model('prestashop.product.template')
+    
+    @api.multi
     def _export_model(self, model):
         session = ConnectorSession(
             self.env.cr,
