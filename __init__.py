@@ -1,4 +1,4 @@
 import connector
-import model
-import test
+import models
+import tests
 import unit

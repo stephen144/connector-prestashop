@@ -3,10 +3,10 @@ from xml.etree import ElementTree
 
 
 def data2xml(data, schema):
-    tree = ElementTree.fromstring(schema)[0]
+    tree = ElementTree.fromstring(schema)
     
     for k, v in data.iteritems():
-        node = tree.find(k)
+        node = tree[0].find(k)
         
         if node.find('language') is not None:
             node.find('language').text = str(v)

@@ -12,6 +12,7 @@
     """,
     "category": "Connector",
     'data': [
-        'view/prestashop_model.xml',
-    ],
+        'views/prestashop_model.xml',
+        'views/prestashop_menu.xml',
+     ],
 }

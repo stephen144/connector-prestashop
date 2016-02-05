@@ -21,7 +21,7 @@ def randomString():
     return string.join(random.choice(chars) for x in range(size))
 
 
-class TestSimplePrestaShopAPI(unittest.TestCase):
+class TestPrestaShopAPI(unittest.TestCase):
 
     def setUp(self):
         self.api = PrestaShopAPI(
@@ -83,5 +83,5 @@ class TestSimplePrestaShopAPI(unittest.TestCase):
 
         
 if __name__ == '__main__':
-    suite = unittest.TestLoader().loadTestsFromTestCase(TestSimplePrestaShopAPI)
+    suite = unittest.TestLoader().loadTestsFromTestCase(TestPrestaShopAPI)
     unittest.TextTestRunner(verbosity=2).run(suite)

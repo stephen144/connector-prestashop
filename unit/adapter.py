@@ -1,20 +1,16 @@
 from openerp.addons.connector.unit.backend_adapter import CRUDAdapter
-from prestashop.prestashop_api import PrestaShopAPI, data2xml, xml2data
+from ..prestashop.prestashop_api import PrestaShopAPI, data2xml, xml2data
 
 
-class PrestaShopCRUDAdapter(CRUDAdapter):
-    """
-    External Records Adapter for PrestaShop
-    """
-
+class PrestaShopAdapter(CRUDAdapter):
     _model_name = None
     _prestashop_model = None
     
     def __init__(self, environment):
-        super(PrestaShopCRUDAdapter, self).__init__(environment)
+        super(PrestaShopAdapter, self).__init__(environment)
         self.api = PrestaShopAPI(
             self.backend_record.location,
-            self.backend_record.webservice_key
+            self.backend_record.key
         )
 
     def create(self, data):
