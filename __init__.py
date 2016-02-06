@@ -1,4 +1,5 @@
-import connector
-import models
+#import connector
+#import models
+import prestashop
 import tests
-import unit
+#import unit

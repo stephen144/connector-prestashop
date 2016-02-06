@@ -1,27 +1,10 @@
-import unittest
-import random
-import string
-from requests.exceptions import HTTPError
-from ..prestashop.prestashop_api import PrestaShopAPI
-import ..prestashop.ps_element_tree as ElementTree
+from .helper import PrestaShopTestCase, randomString
+from ..prestashop import element_tree as ElementTree
+from ..prestashop.api import PrestaShopAPI
+from ..prestashop.util import getNode, setNode
 
 
-def setNode(xml, name, value):
-    element = ElementTree.fromstring(xml)
-    element.find(name).text = str(value)
-    return ElementTree.tostring(element)
-
-def getNode(xml, name):
-    element = ElementTree.fromstring(xml)
-    return element.find(name).text
-
-def randomString():
-    chars = string.ascii_uppercase
-    size = 10
-    return string.join(random.choice(chars) for x in range(size))
-
-
-class TestPrestaShopAPI(unittest.TestCase):
+class TestPrestaShopAPI(PrestaShopTestCase):
 
     def setUp(self):
         self.api = PrestaShopAPI(
@@ -63,8 +46,3 @@ class TestPrestaShopAPI(unittest.TestCase):
         element = ElementTree.fromstring(xml)
         id = element[0][0].get('id')
         self.assertEqual(id, '1')
-
-        
-if __name__ == '__main__':
-    suite = unittest.TestLoader().loadTestsFromTestCase(TestPrestaShopAPI)
-    unittest.TextTestRunner(verbosity=2).run(suite)

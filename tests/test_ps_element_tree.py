@@ -1,21 +1,9 @@
-import unittest
+from .helper import PrestaShopTestCase
 from xml.etree import ElementTree
-import ..prestashop.ps_element_tree as ET
+from ..prestashop import element_tree as ET
 
 
-class TestPrestaShopElementTree(unittest.TestCase):
-
-    def setUp(self):
-        self.xml = """
-        <prestashop>
-          <product>
-            <id>1</id>
-            <name>
-              <language>Steee</language>
-            </name>
-          </product>
-        </prestashop>
-        """
+class TestPrestaShopElementTree(PrestaShopTestCase):
 
     def test_tostring(self):
         element = ElementTree.fromstring(self.xml)
@@ -25,8 +13,4 @@ class TestPrestaShopElementTree(unittest.TestCase):
     def test_fromstring(self):
         element = ET.fromstring(self.xml)
         node = element.find('name')
-        self.assertEqual(node.text, "Steee")
-
-
-if __name__ == '__main__':
-    unittest.main()
+        self.assertEqual(node.text, "Faded Short Sleeves T-shirt")
