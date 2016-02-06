@@ -1,19 +1,19 @@
+import unittest
 import random
 import string
-import unittest
-from xml.etree import ElementTree
 from requests.exceptions import HTTPError
-from ..prestashop.prestashop_api import PrestaShopAPI, data2xml, xml2data
+from ..prestashop.prestashop_api import PrestaShopAPI
+import ..prestashop.ps_element_tree as ElementTree
 
 
-def setNode(xml, node, value):
-    tree = ElementTree.fromstring(xml)
-    tree[0].find(node).text = str(value)
-    return ElementTree.tostring(tree, 'utf-8')
+def setNode(xml, name, value):
+    element = ElementTree.fromstring(xml)
+    element.find(name).text = str(value)
+    return ElementTree.tostring(element)
 
-def getNode(xml, node):
-    tree = ElementTree.fromstring(xml)
-    return tree[0].find(node).text
+def getNode(xml, name):
+    element = ElementTree.fromstring(xml)
+    return element.find(name).text
 
 def randomString():
     chars = string.ascii_uppercase
@@ -28,33 +28,16 @@ class TestPrestaShopAPI(unittest.TestCase):
             'http://winona/prestashop/api',
             'E3P9JC4E5NRJ63ZZYJNKG4IPWGDPEG4L',
         )
-        self.data = {
-            'id': 1,
-            'firstname': 'Steee',
-        }
-        self.xml = """
-        <prestashop>
-          <customer>
-            <id>1</id>
-            <firstname>Steee</firstname>
-          </customer>
-        </prestashop>
-        """
-
-    def test_data2xml(self):
-        schema = self.api.get_schema('customers')
-        xml = data2xml(self.data, schema)
-        self.assertEqual(getNode(xml, 'id'), '1')
-        self.assertEqual(getNode(xml, 'firstname'), 'Steee')        
-
-    def test_xml2data(self):
-        data = xml2data(self.xml)
-        self.assertEqual(data['id'], '1')
-        self.assertEqual(data['firstname'], 'Steee')
         
     def test_get(self):
         xml = self.api.get('customers', 1)
         self.assertEqual(getNode(xml, 'lastname'), "DOE")
+
+        xml = self.api.get('products', 1)
+        self.assertEqual(
+            getNode(xml, 'name'),
+            "Faded Short Sleeves T-shirt",
+        )
 
     def test_post(self):
         xml = self.api.get('customers', 1)
@@ -77,8 +60,8 @@ class TestPrestaShopAPI(unittest.TestCase):
     def test_search(self):
         filters = {'filter[reference]': 'demo_1'}
         xml = self.api.search('products', filters)
-        tree = ElementTree.fromstring(xml)
-        id = tree[0][0].get('id')
+        element = ElementTree.fromstring(xml)
+        id = element[0][0].get('id')
         self.assertEqual(id, '1')
 
         

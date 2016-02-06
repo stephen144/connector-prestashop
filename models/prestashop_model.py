@@ -32,11 +32,7 @@ class PrestaShopBackend(models.Model):
             context = self.env.context,
         )
         self.ensure_one()
-        export_batch.delay(
-            session,
-            model,
-            self.id,
-        )
+        export_batch.delay(session, model, self.id)
 
         
 class PrestaShopBinding(models.AbstractModel):

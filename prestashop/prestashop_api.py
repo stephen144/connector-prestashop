@@ -1,30 +1,5 @@
 import requests
-from xml.etree import ElementTree
-
-
-def data2xml(data, schema):
-    tree = ElementTree.fromstring(schema)
-    
-    for k, v in data.iteritems():
-        node = tree[0].find(k)
         
-        if node.find('language') is not None:
-            node.find('language').text = str(v)
-        else:
-            node.text = str(v)
-    
-    xml = ElementTree.tostring(tree, 'utf-8')
-    return xml
-
-def xml2data(xml):
-    tree = ElementTree.fromstring(xml)
-    data = {}
-    
-    for child in tree[0]:
-        data[child.tag] = child.text
-    
-    return data
-
 
 class PrestaShopAPI(object):
 
