@@ -16,12 +16,3 @@ def data2xml(data, schema):
         e.find(k).text = str(v)
     return ElementTree.tostring(e)
 
-def xml2data(xml):
-    e = ElementTree.fromstring(xml)
-    children = e.findall("*")
-    data = {}
-
-    for child in children:
-        data[child.tag] = child.text
-    
-    return data
