@@ -1,18 +1,23 @@
-import element_tree as ElementTree
-
-
-def getNode(xml, name):
-    e = ElementTree.fromstring(xml)
-    return e.find(name).text
-
-def setNode(xml, name, value):
-    e = ElementTree.fromstring(xml)
-    e.find(name).text = str(value)
-    return ElementTree.tostring(e)
-
-def data2xml(data, schema):
-    e = ElementTree.fromstring(schema)
+def populate(e, data):
     for k, v in data.iteritems():
-        e.find(k).text = str(v)
-    return ElementTree.tostring(e)
+        
+        path = "./*[1]/{}/language".format(k)
+        if e.find(path) is not None:
+            e.find(path).text = str(v)
+            continue
+        
+        path = "./*[1]/{}".format(k)
+        if e.find(path) is not None:
+            e.find(path).text = str(v)
 
+def todict(e):
+    d = {}
+    children = e.findall('./*[1]/*')
+    
+    for c in children:
+        if c.find('./language') is not None:
+            d[c.tag] = c.find('./language').text
+        else:
+            d[c.tag] = c.text
+
+    return d

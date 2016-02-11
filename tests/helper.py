@@ -2,7 +2,7 @@ import random
 import string
 from unittest import TestCase
 from ..prestashop.api import PrestaShopAPI
-from ..prestashop.element_tree import PrestaShopXML
+#from ..prestashop.element_tree import fromstring
 
 
 api = PrestaShopAPI(
@@ -21,11 +21,11 @@ class PrestaShopTestCase(TestCase):
 
     @classmethod
     def setUp(cls):
-        cls._data = {
+        cls.data = {
             'id': 1,
             'name': "Faded Short Sleeves T-shirt",
         }
-        cls._xml = """<prestashop>
+        cls.xml = """<prestashop>
   <product>
     <id>1</id>
     <name>
@@ -33,4 +33,4 @@ class PrestaShopTestCase(TestCase):
     </name>
   </product>
 </prestashop>"""
-        cls._ps_xml = PrestaShopXML(cls._xml)
+        #cls.e = fromstring(cls.xml)

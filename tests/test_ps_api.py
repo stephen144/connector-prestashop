@@ -1,38 +1,42 @@
 from .helper import PrestaShopTestCase, random_string, api
-from ..prestashop.api import PrestaShopAPI
 
 
 class TestPrestaShopAPI(PrestaShopTestCase):
 
     def test_get(self):
         c = api.get('customers', 1)
-        self.assertEqual(c.lastname, "DOE")
+        lastname = c.find('./customer/lastname').text
+        self.assertEqual(lastname, "DOE")
 
         p = api.get('products', 1)
+        name = p.find('./product/name/language').text
         self.assertEqual(
-            p.name,
+            name,
             "Faded Short Sleeves T-shirt",
         )
 
     def test_post(self):
         c = api.get('customers', 1)
-        c.id = ''
+        c.find('./customer/id').text = ''
+        
         c = api.post('customers', c)
-        self.assertTrue(c.id.isdigit())
+        id = c.find('./customer/id').text
+        self.assertTrue(id.isdigit())
 
     def test_put(self):
         c = api.get('customers', 1)
         randomName = random_string()
-        c.firstname = randomName
+        c.find('./customer/firstname').text = randomName
         
         ok = api.put('customers', 1, c)
         self.assertTrue(ok)
 
         c = api.get('customers', 1)
-        self.assertEqual(c.firstname, randomName)
+        firstname = c.find('./customer/firstname').text
+        self.assertEqual(firstname, randomName)
 
     def test_search(self):
         filters = {'filter[reference]': 'demo_1'}
         p = api.search('products', filters)
-        firstChild = p.children[0]
-        self.assertEqual(firstChild.get('id'), '1')
+        id = p.find('./products/*').get('id')
+        self.assertEqual(id, '1')

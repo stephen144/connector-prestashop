@@ -1,5 +1,6 @@
 from openerp.addons.connector.unit.backend_adapter import CRUDAdapter
-from ..prestashop.prestashop_api import PrestaShopAPI, data2xml, xml2data
+from ..prestashop.api import PrestaShopAPI
+from ..prestashop.util import populate, todict
 
 
 class PrestaShopAdapter(CRUDAdapter):
@@ -14,12 +15,10 @@ class PrestaShopAdapter(CRUDAdapter):
         )
 
     def create(self, data):
-        schema = self.api.get_schema(self._prestashop_model)
-        xml = data2xml(data, schema)
-        
-        xml = self.api.post(self._prestashop_model, xml)
-        data = xml2data(xml)
-        return data['id']
+        e = self.api.get_schema(self._prestashop_model)
+        populate(e, data)
+        e = self.api.post(self._prestashop_model, e)
+        return e.find('./*[1]/id').text
         
     def delete(self, ids):
         #pass range of ids to api
@@ -27,17 +26,16 @@ class PrestaShopAdapter(CRUDAdapter):
         return ok
 
     def read(self, id, options=None):
-        xml = self.api.get(self._prestashop_model, id, options)
-        data = xml2data(xml)
-        return data
+        e = self.api.get(self._prestashop_model, id, options)
+        return todict(e)
 
     def search(self, filters):
         return self.api.search(self._prestashop_model, filters)
     
     def write(self, id, data):
-        schema = self.api.get_schema(self._prestashop_model)
-        xml = data2xml(data, schema)
-        ok = self.api.put(self._prestashop_model, id, xml)
+        e = self.api.get(self._prestashop_model, id)
+        populate(e, data)
+        ok = self.api.put(self._prestashop_model, id, e)
         return ok
 
 

@@ -15,20 +15,21 @@ class TestPrestaShopElementTree(PrestaShopTestCase):
         name = e.find('name').text
         self.assertEqual(name, "Faded Short Sleeves T-shirt")
 
+    @unittest.skip()
     def test_ps_xml_e_set(self):
         self._ps_xml.element = "blah"
         self._ps_xml.xml = "haha"
 
-    def test_ps_xml_data(self):
-        data = self._ps_xml.data
+    def test_element_data(self):
+        data = self.e.data
         assertEqual(data['name'], "Faded Short Sleeves T-shirt")
 
         data2 = dict(data)
         random = random_string()
         data2['name'] = random
-        xml = ET.PrestaShopXML(self._xml)
-        xml.data = data2
-        assertEqual(xml.name, random)
+        e2 = ET.fromstring(self.xml)
+        e2.data = data2
+        assertEqual(e2.find('name').text, random)
         
     def test_ps_xml_get(self):
         self.assertEqual(

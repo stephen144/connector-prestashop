@@ -1,5 +1,5 @@
 import requests
-from element_tree import PrestaShopXML
+from xml.etree.ElementTree import fromstring, tostring
         
 
 def make_api_url(url, endpoint, id=None):
@@ -25,21 +25,23 @@ class PrestaShopAPI(object):
         url = make_api_url(self.url, endpoint, id)
         r = requests.get(url, auth=self.auth, params=params)
         r.raise_for_status()
-        return PrestaShopXML(r.text)
+        return fromstring(r.text)
 
     def get_schema(self, endpoint):
         params = {'schema': 'blank'}
         return self.get(endpoint, None, params)
     
-    def post(self, endpoint, data):
+    def post(self, endpoint, e):
         url = make_api_url(self.url, endpoint)
-        r = requests.post(url, auth=self.auth, data=str(data))
+        data = tostring(e)
+        r = requests.post(url, auth=self.auth, data=data)
         r.raise_for_status()
-        return PrestaShopXML(r.text)
+        return fromstring(r.text)
     
-    def put(self, endpoint, id, data):
+    def put(self, endpoint, id, e):
         url = make_api_url(self.url, endpoint, id)
-        r = requests.put(url, auth=self.auth, data=str(data))
+        data = tostring(e)
+        r = requests.put(url, auth=self.auth, data=data)
         return r.ok
 
     def search(self, endpoint, filters):

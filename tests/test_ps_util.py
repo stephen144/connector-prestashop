@@ -1,22 +1,17 @@
 from .helper import PrestaShopTestCase, api
-from ..prestashop.util import (
-    data2xml,
-    xml2data,
-    getNode,
-)
+from ..prestashop.util import populate, todict
 
 
 class TestPrestaShopUtil(PrestaShopTestCase):
 
-    def test_data2xml(self):
-        schema = api.get_schema('products')
-        xml = data2xml(self._data, schema)
-        self.assertEqual(getNode(xml, 'id'), '1')
-        name = "Faded Short Sleeves T-shirt"
-        self.assertEqual(getNode(xml, 'name'), name)        
+    def test_populate(self):
+        p = api.get_schema('products')
+        populate(p, self.data)
+        name = p.find('./product/name/language').text
+        self.assertEqual(name, self.data['name'])
 
-    def test_xml2data(self):
-        data = xml2data(self._xml)
-        self.assertEqual(data['id'], '1')
-        name = "Faded Short Sleeves T-shirt"
-        self.assertEqual(data['name'], name)
+    def test_todict(self):
+        p = api.get('products', 1)
+        data = todict(p)
+        self.assertEqual(data['name'], self.data['name'])
+        self.assertEqual(data['id'], str(self.data['id']))

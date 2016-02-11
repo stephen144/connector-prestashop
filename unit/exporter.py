@@ -36,7 +36,7 @@ class PrestaShopExporter(Exporter):
         if self.prestashop_id:
             # The record exists in PS so update it
             data = map_record.values()
-            self.backend_adapter.write(self.prestashop_id, data)
+            ok = self.backend_adapter.write(self.prestashop_id, data)
         else:
             # The record doesn't exist in PS so create it
             data = map_record.values(for_create=True)
