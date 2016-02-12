@@ -44,5 +44,5 @@ class PrestaShopAPI(object):
         r = requests.put(url, auth=self.auth, data=data)
         return r.ok
 
-    def search(self, endpoint, filters):
-        return self.get(endpoint, None, filters)
+    def search(self, endpoint, params):
+        return self.get(endpoint, None, params)

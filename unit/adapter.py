@@ -29,8 +29,14 @@ class PrestaShopAdapter(CRUDAdapter):
         e = self.api.get(self._prestashop_model, id, options)
         return todict(e)
 
+    # returns only the first result for now
     def search(self, filters):
-        return self.api.search(self._prestashop_model, filters)
+        params = {}
+        for k, v in filters.iteritems():
+            key = 'filter[{}]'.format(k)
+            params[key] = v
+        e = self.api.search(self._prestashop_model, params)
+        return e.find('./*[1]/*[1]').get('id')
     
     def write(self, id, data):
         e = self.api.get(self._prestashop_model, id)

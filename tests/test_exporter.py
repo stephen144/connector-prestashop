@@ -15,7 +15,7 @@ class TestExporter(SingleTransactionCase):
         self.backend = self.env['prestashop.backend'].search([])
         self.backend.ensure_one()
 
-    def test_export_product_create(self):
+    def test_export_create(self):
         product = self.env['product.template'].create({
             'name': random_string(),
             'list_price': 500.00,
@@ -31,7 +31,7 @@ class TestExporter(SingleTransactionCase):
         name = p.find('./product/name/language').text
         self.assertEqual(product.name, name)
 
-    def test_export_product_edit(self):
+    def test_export_edit(self):
         product = self.env['product.template'].create({
             'name': random_string(),
             'list_price': 500.00,
@@ -58,3 +58,7 @@ class TestExporter(SingleTransactionCase):
         p = api.get('products', binding.prestashop_id)
         name = p.find('./product/name/language').text
         self.assertEqual("EDIT TEST", name)
+
+    #do this
+    def test_export_new_but_existing(self):
+        pass

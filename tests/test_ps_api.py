@@ -38,5 +38,5 @@ class TestPrestaShopAPI(PrestaShopTestCase):
     def test_search(self):
         filters = {'filter[reference]': 'demo_1'}
         p = api.search('products', filters)
-        id = p.find('./products/*').get('id')
+        id = p.find('./products/*[1]').get('id')
         self.assertEqual(id, '1')

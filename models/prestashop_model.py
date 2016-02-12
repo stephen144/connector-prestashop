@@ -26,12 +26,12 @@ class PrestaShopBackend(models.Model):
     
     @api.multi
     def _export_model(self, model):
+        self.ensure_one()
         session = ConnectorSession(
             self.env.cr,
             self.env.uid,
             context = self.env.context,
         )
-        self.ensure_one()
         export_batch.delay(session, model, self.id)
 
         
