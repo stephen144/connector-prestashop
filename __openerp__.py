@@ -1,12 +1,12 @@
 {
     "name": "Prestashop-Odoo Connector",
-    "version": "8.01",
-    "license": "AGPL-3",
+    "version": "8.0.1.0.0",
     "depends": [
         "sale",
         "connector",
     ],
-    "author": "SM",
+    "author": "Stephen Medina",
+    "company": "Living Stream Ministry",
     "description": """
     This module connects Odoo and Prestashop by doing a few exports.
     """,
